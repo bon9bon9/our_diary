@@ -1,0 +1,185 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "our_diary with Swagger",
+    "description": "A simple CRUD API application made with Express and documented with Swagger",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3002",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "USER",
+      "description": "US"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer",
+      "in": "header",
+      "bearerFormat": "JWT"
+    }
+  },
+  "paths": {
+    "/users/login": {
+      "post": {
+        "tags": [
+          "USER"
+        ],
+        "summary": "US_04 로그인",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "pwd": {
+                  "example": "any"
+                },
+                "test_code": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "schema": {
+              "$ref": "#/definitions/success_login"
+            }
+          },
+          "403": {
+            "schema": {
+              "$ref": "#/definitions/UserNotFound"
+            },
+            "description": "금지됨"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/hello": {
+      "post": {
+        "tags": [
+          "USER"
+        ],
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "success_login": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "성공"
+        },
+        "code": {
+          "type": "number",
+          "example": 1
+        },
+        "data": {
+          "$ref": "#/data/token"
+        }
+      }
+    },
+    "success_user": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "성공"
+        },
+        "code": {
+          "type": "number",
+          "example": 1
+        },
+        "data": {
+          "$ref": "#/data/user"
+        }
+      }
+    },
+    "UserNotFound": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "회원이 존재하지 않음"
+        },
+        "code": {
+          "type": "number",
+          "example": -1
+        }
+      }
+    },
+    "BadRequest": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "입력이 유효하지 않습니다."
+        },
+        "code": {
+          "type": "number",
+          "example": -1
+        }
+      }
+    },
+    "BackEnd": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "서버 내부 오류"
+        },
+        "code": {
+          "type": "number",
+          "example": -3
+        }
+      }
+    }
+  },
+  "data": {
+    "token": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "example": "사용자의 jwt 토큰"
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "u_id": {
+          "type": "string",
+          "example": "사용자 아이디"
+        },
+        "u_password": {
+          "type": "string",
+          "example": "사용자 비밀번호"
+        }
+      }
+    }
+  }
+}
