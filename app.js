@@ -6,6 +6,11 @@ dotenv.config();
 
 app.listen(process.env.PORT);
 
+const swaggerScript = require('./swagger');
+(async () => {
+    await swaggerScript();
+  })();
+
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger-output.json');
 
