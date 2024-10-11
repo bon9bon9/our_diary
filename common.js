@@ -1,14 +1,7 @@
-const {validationResult} = require('express-validator')
 const conn = require('./mariadb');
 const crypto = require('crypto'); // 기본 모듈 : 암호화를 담당
-
-const validate = (req, res, next) => {
-    const err = validationResult(req);
-    if(!err.isEmpty()){
-        return res.status(400).json(err.array());
-    }
-    return next(); // 다음 할 일로 가라! (미들웨어, 함수)
-}
+const dotenv = require('dotenv');
+dotenv.config();
 
 const resJson = (message, code, data) => {
     return {
@@ -23,15 +16,16 @@ const resSuccessJson = (data, pageInfo) => {
     return {message : "성공", code : 1, pageInfo : pageInfo, data : data};
 }
 
-const encodePwd = (pwd) => {
+const encodePassword = (pwd) => {
     // 비밀번호 암호화
-    const salt = crypto.randomBytes(10).toString('base64');
+    const salt = process.env.CRYPTO_KEY;
     const hashPwd = crypto.pbkdf2Sync(pwd, salt, 10000, 10, 'sha512').toString('base64');
 
-    return {salt : salt, newPwd : hashPwd};
+    return hashPwd;
 }
 
-const comparePwd = (pwd, salt, inputPwd) => {
+const comparePassword = (pwd,inputPwd) => {
+    const salt = process.env.CRYPTO_KEY;
     const encodePwd = crypto.pbkdf2Sync(inputPwd, salt, 10000, 10,'sha512').toString('base64');
     if(pwd == encodePwd)
         return true;
@@ -56,10 +50,9 @@ const getPagenateInfo = (page, size) => {
 }
 
 module.exports = {
-    validate,
     resJson, 
     resSuccessJson, 
-    encodePwd, 
-    comparePwd,
+    encodePassword, 
+    comparePassword,
     getPagenateInfo
 }
