@@ -12,6 +12,12 @@ const resJson = (message, code, data) => {
 
 }
 
+const resDataJson = (res, data) => {
+    res.data = data;
+    return res;
+    
+}
+
 const resSuccessJson = (data, pageInfo) => {
     return {message : "성공", code : 1, pageInfo : pageInfo, data : data};
 }
@@ -49,10 +55,53 @@ const getPagenateInfo = (page, size) => {
     return pagenateInfo;
 }
 
+const emojiRegex = /[\p{Emoji_Presentation}\p{Emoji}\u200D]+/gu;
+const emogiTest = value => {
+  // 값이 이모지인지 확인
+  if(value === undefined){
+    return true;
+  }
+  if (!emojiRegex.test(value)) {
+    throw new Error('이모지가 포함되어 있지 않습니다.');
+  }
+  return true;
+}
+
+const setValueNull = (req,column) => {
+    let values = [];
+    column.forEach(element => {
+        if(req[element] !== undefined){
+            values.push(req[element])
+        }else values.push(null);
+    });
+    return values;
+}
+
+const setUpdateSet = (req, column) => {
+    const updateSets = [];
+    const values = []; // 값을 따로 저장할 배열
+
+    column.forEach(element => {
+        if (req[element] !== undefined) {
+            updateSets.push(`${element} = ?`); // 자리 표시자 사용
+            values.push(req[element]); // 실제 값은 따로 배열에 저장
+        }
+    });
+
+    return {
+        setClause: updateSets.join(", "), // "컬럼명 = ?" 형식으로 조합
+        values: values // 값 배열 반환
+    };
+};
+
 module.exports = {
     resJson, 
+    resDataJson,
     resSuccessJson, 
     encodePassword, 
     comparePassword,
-    getPagenateInfo
+    getPagenateInfo,
+    emogiTest,
+    setValueNull,
+    setUpdateSet
 }

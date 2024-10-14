@@ -25,7 +25,7 @@ const authenticateJWT = (req, res, next) => {
                 //  #swagger.response[403] = {WrongJwt:1}
                 return res.sendStatus(403).json(err); // Forbidden
             }
-            conn.sql(`SELECT * FROM user WHERE us_idx = ?`,[user.us_idx],(err,result) => {
+            conn.query(`SELECT * FROM user WHERE us_idx = ?`,[user.us_idx],(err,result) => {
                 if (err) {
                     // #swagger.responses[500] = {BackEnd:1}
                     return res.sendStatus(500).json(err);
@@ -44,7 +44,7 @@ const authenticateJWT = (req, res, next) => {
         });
     } else {
         //  #swagger.responses[401] = {UnAuth:1}
-        res.sendStatus(401); // Unauthorized
+        return res.sendStatus(401); // Unauthorized
     }
 };
 

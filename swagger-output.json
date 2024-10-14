@@ -13,7 +13,11 @@
   "tags": [
     {
       "name": "USER",
-      "description": "US"
+      "description": "US 회원"
+    },
+    {
+      "name": "GROUP",
+      "description": "GR 모임"
     }
   ],
   "paths": {
@@ -24,31 +28,12 @@
         ],
         "summary": "US_04 로그인",
         "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "성공",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#components/schemas/token"
-                },
+                "schema": {},
                 "examples": {
                   "1": {
                     "value": {
@@ -102,8 +87,28 @@
                   "BackEnd": {
                     "value": {
                       "message": "서버 내부 오류",
-                      "code": -1000
+                      "code": -1000,
+                      "data": "에러 메세지"
                     }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
                   }
                 }
               }
@@ -119,23 +124,6 @@
         ],
         "summary": "US_01 회원 가입",
         "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "성공",
@@ -146,8 +134,7 @@
                   "1": {
                     "value": {
                       "message": "성공",
-                      "code": 1,
-                      "data": "token"
+                      "code": 1
                     }
                   }
                 }
@@ -179,8 +166,28 @@
                   "BackEnd": {
                     "value": {
                       "message": "서버 내부 오류",
-                      "code": -1000
+                      "code": -1000,
+                      "data": "에러 메세지"
                     }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
                   }
                 }
               }
@@ -194,28 +201,6 @@
         ],
         "summary": "US_02 비밀번호 변경",
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "oldPwd": {
-                  "example": "any"
-                },
-                "newPwd": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "성공",
@@ -226,8 +211,7 @@
                   "1": {
                     "value": {
                       "message": "성공",
-                      "code": 1,
-                      "data": "token"
+                      "code": 1
                     }
                   }
                 }
@@ -297,8 +281,33 @@
                   "BackEnd": {
                     "value": {
                       "message": "서버 내부 오류",
-                      "code": -1000
+                      "code": -1000,
+                      "data": "에러 메세지"
                     }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldPwd": {
+                    "example": "any"
+                  },
+                  "newPwd": {
+                    "example": "any"
                   }
                 }
               }
@@ -310,33 +319,22 @@
         "tags": [
           "USER"
         ],
+        "summary": "US_03 회원 탈퇴",
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "성공",
             "content": {
               "application/json": {
                 "schema": {},
-                "examples": {}
+                "examples": {
+                  "1": {
+                    "value": {
+                      "message": "성공",
+                      "code": 1
+                    }
+                  }
+                }
               }
             }
           },
@@ -356,6 +354,12 @@
                     "value": {
                       "message": "잘못된 비밀번호 입니다.",
                       "code": -3
+                    }
+                  },
+                  "CantOut": {
+                    "value": {
+                      "message": "진행중인 일기가 있어 탈퇴하지 못합니다",
+                      "code": -6
                     }
                   }
                 }
@@ -403,8 +407,30 @@
                   "BackEnd": {
                     "value": {
                       "message": "서버 내부 오류",
-                      "code": -1000
+                      "code": -1000,
+                      "data": "에러 메세지"
                     }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "example": "any"
                   }
                 }
               }
@@ -420,27 +446,20 @@
         ],
         "summary": "US_01_01 아이디 중복 확인",
         "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "성공",
             "content": {
               "application/json": {
                 "schema": {},
-                "examples": {}
+                "examples": {
+                  "1": {
+                    "value": {
+                      "message": "성공",
+                      "code": 1
+                    }
+                  }
+                }
               }
             }
           },
@@ -455,6 +474,274 @@
                       "message": "입력이 유효하지 않습니다.",
                       "code": -1001
                     }
+                  },
+                  "DuplicateUserId": {
+                    "value": {
+                      "message": "중복된 아이디 입니다.",
+                      "code": -2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groups/": {
+      "post": {
+        "tags": [
+          "GROUP"
+        ],
+        "summary": "GR_01 새로운 모임 생성",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "1": {
+                    "value": {
+                      "message": "성공",
+                      "code": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "미인증 회원, jwt 토큰이 없거나 만료됨",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "WrongJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gr_emogi": {
+                    "example": "any"
+                  },
+                  "fr_emogi": {
+                    "example": "any"
+                  },
+                  "fr_color": {
+                    "example": "any"
+                  },
+                  "gr_name": {
+                    "example": "any"
+                  },
+                  "gr_search": {
+                    "example": "any"
+                  },
+                  "fr_nickname": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "GROUP"
+        ],
+        "summary": "GR_02 모임 정보 수정",
+        "description": "",
+        "responses": {
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "미인증 회원, jwt 토큰이 없거나 만료됨",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "WrongJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "emogi": {
+                    "example": "any"
+                  },
+                  "search": {
+                    "example": "any"
                   }
                 }
               }
@@ -484,42 +771,9 @@
       }
     }
   },
-  "request": {
-    "success": {
-      "message": "성공",
-      "code": 1
-    },
-    "UserNotFound": {
-      "message": "회원이 존재하지 않음",
-      "code": -1
-    },
-    "DuplicateUserId": {
-      "message": "중복된 아이디 입니다.",
-      "code": -2
-    },
-    "WrongPassword": {
-      "message": "잘못된 비밀번호 입니다.",
-      "code": -3
-    },
-    "OutMember": {
-      "message": "탈퇴 회원 입니다",
-      "code": -4
-    },
-    "WrongJwt": {
-      "message": "잘못된 jwt 입니다",
-      "code": -5
-    },
-    "BackEnd": {
-      "message": "서버 내부 오류",
-      "code": -1000
-    },
-    "BadRequest": {
-      "message": "입력이 유효하지 않습니다.",
-      "code": -1001
-    },
-    "UnAuth": {
-      "message": "미인증 회원, jwt 토큰이 없거나 만료됨",
-      "code": -1002
+  "security": [
+    {
+      "bearerAuth": []
     }
-  }
+  ]
 }

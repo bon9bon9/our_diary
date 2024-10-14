@@ -1,12 +1,8 @@
 // swagger.js
 
-const { oneOf } = require('express-validator');
-const { BAD_REQUEST } = require('http-status-codes');
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
 const swaggerAutogen = require('swagger-autogen')({ language: 'ko' });
 const dotenv = require('dotenv');
-const { application } = require('express');
+const requestDoc = require('./requests')
 dotenv.config();
 
 const doc = {
@@ -19,6 +15,11 @@ const doc = {
     servers: [
         {
             url: "http://localhost:" + process.env.PORT // 서버 URL 설정
+        }
+    ],
+    security : [
+        {
+            bearerAuth : []
         }
     ],
     components: {
@@ -35,48 +36,14 @@ const doc = {
             }
         },
     },
-    request : {
-        success: {
-            message: '성공' ,
-            code: 1
-        },
-        UserNotFound: {
-            message:  '회원이 존재하지 않음' ,
-            code:  -1
-        },
-        DuplicateUserId: {
-            message:  '중복된 아이디 입니다.' ,
-            code:  -2
-        },
-        WrongPassword: {
-            message:  '잘못된 비밀번호 입니다.' ,
-            code:  -3
-        },
-        OutMember: {
-            message : '탈퇴 회원 입니다',
-            code : -4
-        },
-        WrongJwt : {
-            message : '잘못된 jwt 입니다',
-            code : -5
-        },
-        BackEnd: {
-            message:  '서버 내부 오류' ,
-            code:  -1000
-        },
-        BadRequest: {
-            message:  '입력이 유효하지 않습니다.' ,
-            code:  -1001
-        },
-        UnAuth : {
-            message : '미인증 회원, jwt 토큰이 없거나 만료됨',
-            code : -1002
-        },
-    },
     tags: [
         {
             name: 'USER',
-            description: 'US',
+            description: 'US 회원',
+        },
+        {
+            name: 'GROUP',
+            description: 'GR 모임',
         },
     ],
 };
@@ -105,7 +72,7 @@ const generateSwaggerFile = async() => {
             return;
         }
     
-        delete jsonData.swagger;
+        delete jsonData.swagger; // 자동생성된 2.0용 없애기 3.0에는 openapi가 필용합니다
     
         const modifyValues = (responses) => {
             for (let statusCode in responses) {
@@ -119,14 +86,15 @@ const generateSwaggerFile = async() => {
                     delete responses[statusCode][example]; // 그리고 삭제
 
                     if(Object.keys(schema).length === 0 && newExample.data !== undefined){ // 스키마에는 data 스키마 쏘옥
-                        schema["$ref"] = "#components/schemas/"+newExample.data;
+                        if(!doc.components.schemas[newExample.data] === undefined){
+                            schema["$ref"] = "#components/schemas/"+newExample.data;
+                        }
                     }
-
                     let originExample = {};
                     if(statusCode == 200){
-                        originExample = doc.request.success;
+                        originExample = structuredClone(requestDoc.success);
                     }else{
-                        originExample = doc.request[example];
+                        originExample = structuredClone(requestDoc[example]);
                     }
                     if(newExample.message !== undefined) originExample.message = newExample.message;
                     if(newExample.code !== undefined) originExample.code = newExample.code;
@@ -144,8 +112,31 @@ const generateSwaggerFile = async() => {
             
         };
     
+
         for(let path in jsonData.paths){
             for(let method in jsonData.paths[path]){
+                let deleteIndex = [];
+                for(parameter in jsonData.paths[path][method].parameters){
+                    let thisParam = jsonData.paths[path][method].parameters[parameter];
+                    if(thisParam.in !== undefined && thisParam.in === "body"){
+                        let requestbody = {
+                            content : { "application/json" : { }}
+                        }
+                        requestbody.content["application/json"] = jsonData.paths[path][method].parameters[parameter];
+                        deleteIndex.push(parameter);
+                        jsonData.paths[path][method]["requestBody"] = requestbody;
+                    }
+                    if(thisParam.name !== undefined && thisParam.name === "authorization"){
+                        let security = [{bearerAuth : []}];
+                        deleteIndex.push(parameter);
+                        jsonData.paths[path][method]["security"] = security;
+                    }
+                }
+                deleteIndex.sort((a, b) => b - a);
+                deleteIndex.forEach(index => jsonData.paths[path][method].parameters.splice(index, 1));
+                if(jsonData.paths[path][method].parameters.length === 0){
+                    delete jsonData.paths[path][method].parameters;
+                }
                 modifyValues(jsonData.paths[path][method].responses);
             }
         }
