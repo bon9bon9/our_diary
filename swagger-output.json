@@ -13,11 +13,23 @@
   "tags": [
     {
       "name": "USER",
-      "description": "US 회원"
+      "description": "🧑‍💻 US 회원"
     },
     {
       "name": "GROUP",
-      "description": "GR 모임"
+      "description": "👥 GR 모임"
+    },
+    {
+      "name": "FRIEND",
+      "description": "🫂 FR 칭구"
+    },
+    {
+      "name": "DIARY",
+      "description": "📓 DI 다이어리"
+    },
+    {
+      "name": "PAGE",
+      "description": "📃 PA 페이지"
     }
   ],
   "paths": {
@@ -111,7 +123,11 @@
                     "example": "any"
                   }
                 }
-              }
+              },
+              "required": [
+                "id",
+                "password"
+              ]
             }
           }
         }
@@ -141,8 +157,8 @@
               }
             }
           },
-          "400": {
-            "description": "잘못된 요청",
+          "409": {
+            "description": "충돌",
             "content": {
               "application/json": {
                 "schema": {},
@@ -190,7 +206,11 @@
                     "example": "any"
                   }
                 }
-              }
+              },
+              "required": [
+                "id",
+                "password"
+              ]
             }
           }
         }
@@ -201,6 +221,13 @@
         ],
         "summary": "US_02 비밀번호 변경",
         "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "성공",
@@ -248,7 +275,7 @@
                 "examples": {
                   "UnAuth": {
                     "value": {
-                      "message": "미인증 회원, jwt 토큰이 없거나 만료됨",
+                      "message": "jwt 토큰이 없음",
                       "code": -1002
                     }
                   }
@@ -262,10 +289,22 @@
               "application/json": {
                 "schema": {},
                 "examples": {
-                  "WrongJwt": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
                     "value": {
                       "message": "잘못된 jwt 입니다",
-                      "code": -5
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
                     }
                   }
                 }
@@ -310,7 +349,11 @@
                     "example": "any"
                   }
                 }
-              }
+              },
+              "required": [
+                "oldPwd",
+                "newPwd"
+              ]
             }
           }
         }
@@ -321,6 +364,13 @@
         ],
         "summary": "US_03 회원 탈퇴",
         "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "성공",
@@ -355,12 +405,6 @@
                       "message": "잘못된 비밀번호 입니다.",
                       "code": -3
                     }
-                  },
-                  "CantOut": {
-                    "value": {
-                      "message": "진행중인 일기가 있어 탈퇴하지 못합니다",
-                      "code": -6
-                    }
                   }
                 }
               }
@@ -374,7 +418,7 @@
                 "examples": {
                   "UnAuth": {
                     "value": {
-                      "message": "미인증 회원, jwt 토큰이 없거나 만료됨",
+                      "message": "jwt 토큰이 없음",
                       "code": -1002
                     }
                   }
@@ -388,10 +432,38 @@
               "application/json": {
                 "schema": {},
                 "examples": {
-                  "WrongJwt": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
                     "value": {
                       "message": "잘못된 jwt 입니다",
-                      "code": -5
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "충돌",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "CantOut": {
+                    "value": {
+                      "message": "진행중인 일기가 있어 탈퇴하지 못합니다",
+                      "code": -6
                     }
                   }
                 }
@@ -433,7 +505,10 @@
                     "example": "any"
                   }
                 }
-              }
+              },
+              "required": [
+                "password"
+              ]
             }
           }
         }
@@ -474,7 +549,17 @@
                       "message": "입력이 유효하지 않습니다.",
                       "code": -1001
                     }
-                  },
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "충돌",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
                   "DuplicateUserId": {
                     "value": {
                       "message": "중복된 아이디 입니다.",
@@ -515,7 +600,10 @@
                     "example": "any"
                   }
                 }
-              }
+              },
+              "required": [
+                "id"
+              ]
             }
           }
         }
@@ -528,6 +616,13 @@
         ],
         "summary": "GR_01 새로운 모임 생성",
         "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "성공",
@@ -569,7 +664,7 @@
                 "examples": {
                   "UnAuth": {
                     "value": {
-                      "message": "미인증 회원, jwt 토큰이 없거나 만료됨",
+                      "message": "jwt 토큰이 없음",
                       "code": -1002
                     }
                   }
@@ -583,10 +678,22 @@
               "application/json": {
                 "schema": {},
                 "examples": {
-                  "WrongJwt": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
                     "value": {
                       "message": "잘못된 jwt 입니다",
-                      "code": -5
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
                     }
                   }
                 }
@@ -624,26 +731,27 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "gr_name": {
+                    "example": "any"
+                  },
                   "gr_emogi": {
                     "example": "any"
                   },
-                  "fr_emogi": {
+                  "fr_nickname": {
                     "example": "any"
                   },
                   "fr_color": {
                     "example": "any"
                   },
-                  "gr_name": {
-                    "example": "any"
-                  },
-                  "gr_search": {
-                    "example": "any"
-                  },
-                  "fr_nickname": {
+                  "fr_emogi": {
                     "example": "any"
                   }
                 }
-              }
+              },
+              "required": [
+                "gr_name",
+                "fr_nickname"
+              ]
             }
           }
         }
@@ -654,7 +762,30 @@
         ],
         "summary": "GR_02 모임 정보 수정",
         "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "1": {
+                    "value": {
+                      "message": "성공",
+                      "code": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
           "400": {
             "description": "잘못된 요청",
             "content": {
@@ -679,7 +810,7 @@
                 "examples": {
                   "UnAuth": {
                     "value": {
-                      "message": "미인증 회원, jwt 토큰이 없거나 만료됨",
+                      "message": "jwt 토큰이 없음",
                       "code": -1002
                     }
                   }
@@ -693,10 +824,38 @@
               "application/json": {
                 "schema": {},
                 "examples": {
-                  "WrongJwt": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
                     "value": {
                       "message": "잘못된 jwt 입니다",
-                      "code": -5
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "충돌",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "CantUpdateGroup": {
+                    "value": {
+                      "message": "일기가 진행된 후로는 초대 방식을 바꾸지 못함",
+                      "code": -7
                     }
                   }
                 }
@@ -734,13 +893,1848 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
+                  "gr_name": {
                     "example": "any"
                   },
-                  "emogi": {
+                  "gr_emogi": {
                     "example": "any"
                   },
-                  "search": {
+                  "groups_idx": {
+                    "example": "any"
+                  }
+                }
+              },
+              "required": [
+                "groups_idx"
+              ]
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "GROUP"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/friends/deliver": {
+      "get": {
+        "tags": [
+          "FRIEND"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "diary_idx",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/friends/my": {
+      "get": {
+        "tags": [
+          "FRIEND"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "groups_idx",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "diary_idx",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/friends/": {
+      "get": {
+        "tags": [
+          "FRIEND"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "us_idx",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "diary_idx",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/diary/": {
+      "post": {
+        "tags": [
+          "DIARY"
+        ],
+        "summary": "DI_01 일기장 생성",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "1": {
+                    "value": {
+                      "message": "성공",
+                      "code": 1,
+                      "data": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "di_title": {
+                    "example": "any"
+                  },
+                  "gr_idx": {
+                    "example": "any"
+                  },
+                  "di_total_cycle": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diary/done": {
+      "get": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "groups_idx",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/diary/page": {
+      "get": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "diary_idx",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "DIARY"
+        ],
+        "summary": "DI_02 일기 저장",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pa_content": {
+                    "example": "any"
+                  },
+                  "diary_idx": {
+                    "example": "any"
+                  },
+                  "pd_date": {
+                    "example": "any"
+                  },
+                  "pd_title": {
+                    "example": "any"
+                  },
+                  "pd_weather": {
+                    "example": "any"
+                  },
+                  "pd_tmi": {
+                    "example": "any"
+                  },
+                  "pd_lunch": {
+                    "example": "any"
+                  },
+                  "pd_question": {
+                    "example": "any"
+                  },
+                  "pages_idx": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diary/state": {
+      "get": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "groups_idx",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/diary/page/writing": {
+      "get": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "diary_idx",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/diary/deliver": {
+      "post": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diary_idx": {
+                    "example": "any"
+                  },
+                  "receiver_idx": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diary/invite": {
+      "post": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diary_idx": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diary/invite/receive": {
+      "post": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "example": "any"
+                  },
+                  "fr_nickname": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diary/read": {
+      "post": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diary_idx": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diary/end": {
+      "post": {
+        "tags": [
+          "DIARY"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BadRequest": {
+                    "value": {
+                      "message": "입력이 유효하지 않습니다.",
+                      "code": -1001
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "UnAuth": {
+                    "value": {
+                      "message": "jwt 토큰이 없음",
+                      "code": -1002
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "금지됨",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "TokenExpired": {
+                    "value": {
+                      "message": "만료된 jwt 입니다",
+                      "code": -1004
+                    }
+                  },
+                  "InvalidJwt": {
+                    "value": {
+                      "message": "잘못된 jwt 입니다",
+                      "code": -1003
+                    }
+                  },
+                  "OutMember": {
+                    "value": {
+                      "message": "탈퇴 회원 입니다",
+                      "code": -4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "내부 서버 오류",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "BackEnd": {
+                    "value": {
+                      "message": "서버 내부 오류",
+                      "code": -1000,
+                      "data": "에러 메세지"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diary_idx": {
                     "example": "any"
                   }
                 }

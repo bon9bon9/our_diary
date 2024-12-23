@@ -4,7 +4,7 @@ const {resJson,
     resDataJson,
     resSuccessJson, 
     encodePassword, 
-    getPagenateInfo
+    getPaginateInfo
 } = require('../common');
 const MySQLErrors = require('../mysqlErrors');
 const jwt = require('jsonwebtoken');
@@ -27,7 +27,7 @@ const login =  (req, res) => {
         token = jwt.sign({
             us_idx : result[0].us_idx
         }, process.env.PRIVATE_KEY,{
-            expiresIn :'1h'
+            expiresIn :'7d'
         });
         // #swagger.responses[200] = {1:{data:"token"}}
         res.cookie("token",token,{httpOnly:true}).json(resSuccessJson(token))
@@ -42,8 +42,8 @@ const join = (req, res) => {
     conn.query(sql, [id,newPassword], (err,result) => {
         if(err){
             if(err.code === MySQLErrors.ER_DUP_ENTRY.code){
-                //  #swagger.responses[400] = {DuplicateUserId:1}
-                return res.status(StatusCodes.BAD_REQUEST).json(requestDoc.DuplicateUserId);
+                //  #swagger.responses[409] = {DuplicateUserId:1}
+                return res.status(StatusCodes.CONFLICT).json(requestDoc.DuplicateUserId);
             }
             // #swagger.responses[500] = {BackEnd:1}
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(resDataJson(requestDoc.BackEnd,err));
@@ -90,8 +90,8 @@ const checkId = (req,res) => {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(resDataJson(requestDoc.BackEnd,err));
         }
         if(result.length){
-            // #swagger.responses[400] = {DuplicateUserId:1}
-            return res.status(StatusCodes.BAD_REQUEST).json(requestDoc.DuplicateUserId);
+            // #swagger.responses[409] = {DuplicateUserId:1}
+            return res.status(StatusCodes.CONFLICT).json(requestDoc.DuplicateUserId);
         }
         // #swagger.responses[200] = {1:1}
         res.json(resSuccessJson());
@@ -123,8 +123,8 @@ const deleteUser = async (req,res) => {
         WHERE us.us_idx = ? AND di.di_state = 1`
         const diary = await conn.promise().query(checkDiary, [us_idx]);
         if(diary.length){
-            // #swagger.responses[400] = {CantOut:1}
-            return res.status(StatusCodes.BAD_REQUEST).json(requestDoc.CantOut)
+            // #swagger.responses[409] = {CantOut:1}
+            return res.status(StatusCodes.CONFLICT).json(requestDoc.CantOut)
         }
         
         // 회원 탈퇴
